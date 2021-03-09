@@ -1,5 +1,5 @@
-import { useArray, useMount } from "utils";
-import React from "react";
+import { useArray, useMount} from "utils";
+import { useState,useEffect } from "react";
 
 export const TsReactTest = () => {
   const persons: { name: string; age: number }[] = [
@@ -18,8 +18,29 @@ export const TsReactTest = () => {
     // 期待这里报错：Argument of type 'string' is not assignable to parameter of type 'number'.
     // removeIndex("123");
   });
+
+  const [time,setTime] = useState(new Date().getTime())
+  const [lastTime] = useState(1614829408494)
+  const [over,setOver] = useState(false)
+  useEffect(() => {
+    let timeOut: NodeJS.Timeout
+    if (lastTime - time > 0) {
+      timeOut = setTimeout(() => {
+        setTime(time + 1)    
+      }, 1000);
+    } else {
+      setOver(true)
+    }
+    return () => { 
+      clearTimeout(timeOut)
+    }
+  }, [time,lastTime])
+  
+
   return (
     <div>
+      {time}
+      {over ? '结束了' : '还没结束'}
       {/*期待: 点击以后增加 john */}
       <button onClick={() => add({ name: "john", age: 22 })}>add john</button>
       {/*期待: 点击以后删除第一项*/}
