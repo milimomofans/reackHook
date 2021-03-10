@@ -1,10 +1,9 @@
 import React,{ useState,useEffect } from "react"
-import qs from 'qs'
 import { clearObject,useMount,useDebounce } from 'utils/index'
 import { SerachPanel } from "./serach-pannel"
+import {useHttp} from 'utils/http'
 import { List } from './list'
 
-const apiUrl = process.env.REACT_APP_API_URL
 
 export const ProjectListScreen = () => {
     const [list,setList] = useState([])
@@ -14,21 +13,15 @@ export const ProjectListScreen = () => {
     })
     const [users,setUsers] = useState([]) 
     const debounceValue = useDebounce(param,500)
-    
+    const client = useHttp()
+
     useEffect(() => {
-      fetch(`${apiUrl}/projects?${qs.stringify(clearObject(debounceValue))}`).then(async response=>{
-          if (response.ok) {
-            setList(await response.json())
-          }
-      })
+      client("projects", { data: clearObject(debounceValue) }).then(setList);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debounceValue])
 
     useMount(()=>{
-      fetch(`${apiUrl}/users`).then(async response=>{
-        if (response.ok) {
-          setUsers(await response.json())
-        }
-      })
+      client("users").then(setUsers);
     })
 
     return <div>
