@@ -1,12 +1,12 @@
-import { useEffect,useState } from 'react'
+import { useEffect,useRef,useState } from 'react'
 export const isFalsy = (value:unknown) => value === 0 ? false : !value
 
-export const clearObject = (object:Object) => {
+export const isVoid = (value:unknown) => value === undefined || value === null || value === ''
+
+export const clearObject = (object:{[key:string]:unknown}) => {
     const result = {...object}
     Object.keys(object).forEach(key => {
-        // @ts-ignore
-        if (isFalsy(object[key]) ) {
-            // @ts-ignore
+        if (isVoid(object[key]) ) {
             delete result[key]
         }
     })
@@ -50,4 +50,25 @@ export const useArray = <T>(initialArray:T[]) => {
         },
         clear:()=>{setValue([])}
     }
+}
+
+export const useDocumentTitle = (title:string,keepOnUnmount:boolean = true) => {
+    const oldTitle = useRef(document.title).current;
+    useEffect(()=>{
+        document.title = title;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[title])
+
+    useEffect(()=>{
+        console.log(oldTitle,'------------------oldtitle')
+        return () => {
+            if (!keepOnUnmount) {
+                document.title = oldTitle
+            }
+        }
+      
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[keepOnUnmount,oldTitle])
+
+    
 }

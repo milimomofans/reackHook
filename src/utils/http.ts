@@ -8,11 +8,10 @@ interface Config extends RequestInit {
     data?:object
 }
 
-const http = async(
+export const http = async(
     endpoint:string,
     {data,token,headers,...customConfig}:Config = {}
 ) => {
-    console.log(data)
     const config = {
         method:'GET',
         headers:{
@@ -33,7 +32,7 @@ const http = async(
             window.location.reload()
             return Promise.reject({message:'请重新登录'})
         }
-        const data = response.json()
+        const data = await response.json()
         if (response.ok) {
             return data
         } else {

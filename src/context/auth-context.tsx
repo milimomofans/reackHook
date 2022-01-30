@@ -1,6 +1,10 @@
-import React, {  ReactNode, useState } from "react";
+import React, {  ReactNode } from "react";
 import * as auth from 'auth-provider'
 import { User } from 'screens/project-list/serach-pannel'
+import { http } from "utils/http";
+import { useMount } from "utils/index";
+import { useAsync } from "utils/useAsync";
+import { FullPageErrorFallback, FullPageLoading } from "components/lib";
 
 interface AuthForm {
     username:string;
@@ -18,13 +22,34 @@ const AuthContext = React.createContext<
 >(undefined)
 AuthContext.displayName = 'AuthContext'
 
+const bootstrapUser = async () => {
+    let user = null
+    const token = auth.getToken()
+    if (token) {
+        const data = await http('me',{token})
+        user = data.user
+    }
+    return user
+}
+
 export const AuthProvider = ({ children }:{ children: ReactNode }) => {
-    const [user,setUser] = useState<User | null>(null)
+    const {run,isError,isIdle,isLoading,data:user,setData:setUser,error} = useAsync<User | null>()
     
     // point free
     const login = (form:AuthForm) => auth.login(form).then(setUser)
     const register = (form:AuthForm) => auth.register(form).then(setUser)
     const logout = () => auth.logout().then(()=>setUser(null))
+    useMount(()=>{
+        // bootstrapUser().then(setUser)
+        run(bootstrapUser())
+    })
+    if (isIdle || isLoading) {
+        return <FullPageLoading />
+    }
+
+    if (isError) {
+        return <FullPageErrorFallback error={error} />
+    }
 
     return <AuthContext.Provider 
         children={children} 
