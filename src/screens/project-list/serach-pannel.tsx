@@ -1,11 +1,13 @@
 /**@jsxImportSource @emotion/react */
-import { Input, Select, Form } from "antd"
+import { Input, Form } from "antd"
 // import {jsx} from '@emotion/react'
 import React from 'react'
+import { Project } from "./list"
+import { UserSelect } from "components/user-select"
 
 
 export interface User {
-    id:string
+    id:number
     name:string
     email:string
     title:string
@@ -15,10 +17,7 @@ export interface User {
 
 interface SerachPanelProps {
     users:User[],
-    param:{
-        name:string,
-        personId:string
-    },
+    param:Partial<Pick<Project,'name' | 'personId'>>
     setParam:(param:SerachPanelProps['param']) => void
 }
 
@@ -33,21 +32,28 @@ export const SerachPanel = ({param,setParam,users}:SerachPanelProps) => {
             }} />
         </Form.Item>
         <Form.Item>
-            <Select value={param.personId} onChange={(value)=>{
-                setParam({
-                    ...param,
-                    personId:value
-                })
-            }}>
-                <Select.Option value="">负责人</Select.Option>
-                {
-                    users.map(user=>{
-                        return (
-                            <Select.Option value={user.id} key={user.id}>{user.name}</Select.Option>
-                        )
+            {/* <IdSelect 
+                value={param.personId} 
+                options={users}
+                onChange={(value)=>{
+                    setParam({
+                        ...param,
+                        personId:value
                     })
-                }
-            </Select>
+                }}
+                defaultOptionName="负责人"
+            >
+            </IdSelect> */}
+            <UserSelect 
+                value={param.personId}
+                onChange={(value)=>{
+                    setParam({
+                        ...param,
+                        personId:value
+                    })
+                }}
+                defaultOptionName={"负责人"}
+            />
         </Form.Item>
     </Form>
 }

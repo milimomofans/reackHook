@@ -5,21 +5,25 @@ import React from "react";
 import {ProjectListScreen} from 'screens/project-list/index'
 import {ReactComponent as SoftwareLogo}  from 'assets/software-logo.svg'
 import { Button, Dropdown, Menu } from "antd";
-import { Navigate,Route,Routes } from 'react-router'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { Route,Routes } from 'react-router'
+import {BrowserRouter as Router } from 'react-router-dom'
 import { ProjectScreen } from "./screens/project";
+import { ResetRoute } from "./utils";
 
 export const AuthenticatedApp = () => {
     return (
+        
         <Container>
             <PageHeader />
             <Main>
-                <ProjectListScreen />
-                
+                <Router>
                     <Routes>
-                        <Route path={'/projects'} element={<ProjectListScreen />} />
-                        <Route path={'/projects/:projectId/*'} element={<ProjectScreen />} />
+                        <Route path={"projects"} element={<ProjectListScreen />} />
+                        <Route path={"projects/:projectId/*"} element={<ProjectScreen />} />
+                        <Route index element={<ProjectListScreen />} />
                     </Routes>
+                </Router>
+
             </Main>
         </Container>
     )
@@ -29,7 +33,9 @@ const PageHeader = () => {
     const {logout,user} = useAuth()
     return <Header between={true}>
         <HeaderLeft gap={true}>
-            <SoftwareLogo width={'18rem'} color={'rgb(38,132,255)'} />
+            <Button onClick={ResetRoute} type="link">
+                <SoftwareLogo width={'18rem'} color={'rgb(38,132,255)'} />
+            </Button>
             <h2>项目</h2>
             <h2>用户</h2>
         </HeaderLeft>

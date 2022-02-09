@@ -1,22 +1,25 @@
+import { useCallback } from "react"
 import { useHttp } from "./http"
 import { useMount } from "./index"
 import { useAsync } from "./useAsync"
+import { User } from "screens/project-list/serach-pannel"
 
-interface User {
-    id:string
-    name:string
-    email:string
-    title:string
-    organization:string
-    token:string
-}
 
 export const useUsers = () => {
     const {run,...result} = useAsync<User[]>()
     const client = useHttp()
     
-    useMount(()=>{
-        run(client('users'))
-    })
+    // useMount(()=>{
+
+    //     run(client('users'))
+    // })
+
+    useMount(
+        useCallback(()=>{
+            run(client('users'))
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        },[])
+    )
+
     return result
 }

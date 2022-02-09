@@ -1,4 +1,4 @@
-import React, {  ReactNode } from "react";
+import React, {  ReactNode, useCallback } from "react";
 import * as auth from 'auth-provider'
 import { User } from 'screens/project-list/serach-pannel'
 import { http } from "utils/http";
@@ -39,10 +39,14 @@ export const AuthProvider = ({ children }:{ children: ReactNode }) => {
     const login = (form:AuthForm) => auth.login(form).then(setUser)
     const register = (form:AuthForm) => auth.register(form).then(setUser)
     const logout = () => auth.logout().then(()=>setUser(null))
-    useMount(()=>{
-        // bootstrapUser().then(setUser)
-        run(bootstrapUser())
-    })
+
+    useMount(
+        useCallback(()=>{
+            run(bootstrapUser())
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        },[])
+    )
+
     if (isIdle || isLoading) {
         return <FullPageLoading />
     }

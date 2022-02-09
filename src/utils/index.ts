@@ -16,8 +16,7 @@ export const clearObject = (object:{[key:string]:unknown}) => {
 export const useMount = (callback:()=>void) => {
     useEffect(() => {
        callback()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [callback])
 }
 
 export const useDebounce = <V>(value:V,delay?:number):V => {
@@ -69,6 +68,7 @@ export const useDocumentTitle = (title:string,keepOnUnmount:boolean = true) => {
       
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[keepOnUnmount,oldTitle])
-
     
 }
+
+export const ResetRoute = () => window.location.href = window.location.origin
